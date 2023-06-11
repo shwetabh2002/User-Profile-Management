@@ -3,16 +3,20 @@ const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
 const routes = require('./routes');
+const {Hotel,seedMockHotels} = require('./models/hotel');
+//used seedMockhotels fuction only once to save the hotels details only one time.
 
 
 const app= express();
+
+
 
 mongoose.connect('CONNECTION_STRING', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
   .then(() => {
-    console.log('Connected to MongoDB');
+     console.log('Connected to MongoDB');
     app.listen(9000, () => {
       console.log('Server started on port 9000');
     });
@@ -20,7 +24,6 @@ mongoose.connect('CONNECTION_STRING', {
   .catch((err) => {
     console.error('Error connecting to MongoDB', err);
   });
-
 
 
 app.set('view engine', 'ejs');
@@ -31,5 +34,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use('/', routes);
-
+ 
 module.exports = app;
+ 

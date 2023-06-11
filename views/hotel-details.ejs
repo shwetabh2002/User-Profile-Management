@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hotel Details</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      padding: 20px;
+    }
+
+    .hotel-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .hotel-item {
+      width: 300px;
+      margin: 10px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    p {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .hotel-name {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .hotel-location {
+      font-style: italic;
+      color: #777;
+    }
+
+    .hotel-description {
+      margin-bottom: 5px;
+    }
+
+    .hotel-price {
+      font-weight: bold;
+      color: #4caf50;
+    }
+
+    .booking-form {
+      margin-top: 20px;
+    }
+
+    .booking-form label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .booking-form input[type="date"] {
+      padding: 5px;
+      width: 100%;
+    }
+
+    .booking-form button {
+      margin-top: 10px;
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .booking-form button:hover {
+      background-color: #45a049;
+    }
+    a{
+      margin-top: 10px;
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      text-decoration: none;
+      
+    }
+
+    .a-tag{
+       margin-left: 45%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Available Hotels</h1>
+  <div class="hotel-list">
+    <% hotels.forEach((hotel) => { %>
+      <div class="hotel-item">
+        <h2 class="hotel-name"><%= hotel.name %></h2>
+        <p class="hotel-location"><strong>Location:</strong> <%= hotel.location %></p>
+        <p class="hotel-description"><strong>Description:</strong> <%= hotel.description %></p>
+        <p class="hotel-price"><strong>Price:</strong> <%= hotel.price %> per night</p>
+        <form class="booking-form" action="/users/<%= user._id %>/hotel/book" method="POST">
+          <label for="date">Select Date:</label>
+          <input type="date" id="date" name="date" required>
+          <input type="hidden" name="hotelId" value="<%= hotel._id %>">
+          <button type="submit">Book</button>
+        </form>
+      </div>
+    <% }); %>
+  </div>
+  <div class="a-tag">
+  <a href="/users/<%= user._id %>/booking-history">My Bookings</a>
+  </div>
+</body>
+</html>

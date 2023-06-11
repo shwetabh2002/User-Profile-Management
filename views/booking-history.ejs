@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Booking History</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      padding: 20px;
+    }
+
+    .card {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .booking-item {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .booking-item p {
+      margin: 0;
+    }
+
+    .booking-item .booking-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .booking-item .booking-actions {
+      margin-top: 10px;
+    }
+
+    .booking-item .booking-actions a {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      text-decoration: none;
+    }
+
+    .booking-item .booking-actions a:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Booking History</h1>
+
+  <% if (bookings.length > 0) { %>
+    <div class="booking-list">
+      <% bookings.forEach((booking) => { %>
+        <div class="booking-item">
+          <h2><%= booking.hotel.name %></h2>
+          <p><strong>Date:</strong> <%= booking.date.toDateString() %></p>
+          <p><strong>User:</strong> <%= booking.user.name %></p>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div class="card">
+      <h2>No bookings found</h2>
+      <p>You haven't made any bookings yet.</p>
+      <div class="booking-actions">
+        <a href="/users/<%= bookings[0].user._id %>/hotel">View Hotels</a>
+      </div>
+    </div>
+  <% } %>
+
+</body>
+</html>

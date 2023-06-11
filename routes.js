@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const {Hotel} = require('./models/hotel');
+const Booking = require('./models/booking');
 const User = require('./models/user');
 
 
@@ -76,37 +78,141 @@ router.get('/signup', (req, res) => {
   });
   
 
-//this is used to update the user details in the database
-  router.put('/users/:id', (req, res) => {
+
+//this if for getting hotel details which i saved predefined hotels 
+//in db by calling a function once in server.js
+  router.get('/users/:id/hotel', (req, res) => {
     const userId = req.params.id;
-    const { name, email, phone, address } = req.body;
   
-    User.findByIdAndUpdate(userId, { name, email, phone, address }, { new: true })
-      .then((updatedUser) => {
-        res.render('user-details', { user: updatedUser });
+    User.findById(userId)
+      .then((user) => {
+        Hotel.find()
+          .then((hotels) => {
+            res.render('hotel-details', { user, hotels });
+          })
+          .catch((err) => {
+            console.error('Error finding hotels in the database', err);
+            res.status(500).send('An error occurred');
+          });
       })
       .catch((err) => {
-        console.error('Error updating user in the database', err);
+        console.error('Error finding user in the database', err);
         res.status(500).send('An error occurred');
       });
   });
 
-  
-  //It is used to show the details of the user before updated and 
-  // after update it shows the updated details.
-  router.post('/users/:id', (req, res) => {
+  router.post('/users/:id/hotel', (req, res) => {
     const userId = req.params.id;
-    const { name, email, phone, address } = req.body;
+    const hotelId = req.body.hotelId;
   
-    User.findByIdAndUpdate(userId, { name, email, phone, address  }, { new: true })
-      .then((updatedUser) => {
-        res.render('user-details', { user: updatedUser });
+    User.findById(userId)
+      .then((user) => {
+        Hotel.findById(hotelId)
+          .then((hotel) => {
+            if (!hotel) {
+              return res.render('error', { message: 'Hotel not found' });
+            }
+  
+            user.bookings.push({ hotel: hotel._id });
+            user.save()
+              .then(() => {
+                res.redirect(`/users/${userId}/booking-history`);
+              })
+              .catch((err) => {
+                console.error('Error saving user to the database', err);
+                res.status(500).send('An error occurred');
+              });
+          })
+          .catch((err) => {
+            console.error('Error finding hotel in the database', err);
+            res.status(500).send('An error occurred');
+          });
       })
       .catch((err) => {
-        console.error('Error updating user in the database', err);
+        console.error('Error finding user in the database', err);
         res.status(500).send('An error occurred');
       });
   });
+  
+  
 
+//this helps us to book the hotel and if booked then show 
+//the history and various functionality.
+  router.post('/users/:userId/hotel/book', (req, res) => {
+    const userId = req.params.userId;
+    const { hotelId, date } = req.body;
+  
+    User.findById(userId)
+      .then((user) => {
+        if (!user) {
+          return res.render('error', { message: 'User not found' });
+        }
+  
+        Hotel.findOne({ _id: hotelId })
+          .then((hotel) => {
+            if (!hotel) {
+              return res.render('error', { message: 'Hotel not found' });
+            }
+  
+            // this will check if the hotel is booked on the specific date
+            Booking.findOne({ hotel: hotel._id, date: new Date(date) })
+              .then((existingBooking) => {
+                if (existingBooking) {
+                  return res.render('error', { message: 'Hotel is already booked for the selected date' });
+                }
+  
+                const newBooking = new Booking({
+                  user: user._id,
+                  hotel: hotel._id,
+                  date: new Date(date),
+                });
+  
+                newBooking.save()
+                  .then(() => {
+                    res.redirect(`/users/${userId}/booking-history`);
+                  })
+                  .catch((err) => {
+                    console.error('Error saving booking to the database', err);
+                    res.status(500).send('An error occurred');
+                  });
+              })
+              .catch((err) => {
+                console.error('Error finding existing booking in the database', err);
+                res.status(500).send('An error occurred');
+              });
+          })
+          .catch((err) => {
+            console.error('Error finding hotel in the database', err);
+            res.status(500).send('An error occurred');
+          });
+      })
+      .catch((err) => {
+        console.error('Error finding user in the database', err);
+        res.status(500).send('An error occurred');
+      });
+  });
+  
+  
+  //THIS gets the booking history of user
+  router.get('/users/:id/booking-history', (req, res) => {
+    const userId = req.params.id;
+  
+    Booking.find({ user: userId })
+      .populate('user')
+      .populate('hotel')
+      .exec()
+      .then((bookings) => {
+        if (bookings.length === 0) {
+          res.render('error', { message: 'No bookings found' });
+        } else {
+          res.render('booking-history', { bookings });
+        }
+      }) 
+      .catch((err) => {
+        console.error('Error finding bookings in the database', err);
+        res.status(500).send('An error occurred');
+      });
+  });
+  
   module.exports = router;
   

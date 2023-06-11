@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+
+//Taking user input for sign up and then login
 const userSchema = new mongoose.Schema({
   name: {
     type: String,

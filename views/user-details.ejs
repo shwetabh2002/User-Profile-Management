@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,7 +10,7 @@
     }
 
     .card {
-      max-width: 400px;
+      max-width: 500px;
       margin: 0 auto;
       background-color: #fff;
       padding: 20px;
@@ -59,8 +58,10 @@
     <p>Phone: <%= user.phone %></p>
     <p>Address: <%= user.address %></p>
     <div class="update-button">
-      <a href="/users/<%= user._id %>/edit">Update Details</a>
-      <a href="/signup">Logout</a>
+      <a href="/login">Logout</a>
+      <a href="/users/<%= user._id %>/hotel">View Hotels</a>
+      <a href="/users/<%= user._id %>/booking-history">My Bookings</a>
+
     </div>
   </div>
 </body>
